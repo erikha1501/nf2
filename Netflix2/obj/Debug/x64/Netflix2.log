@@ -1,5 +1,0 @@
-﻿  main.c
-E:\Project\Netflix2\Netflix2\src\csv_reader_c.h(13,6): warning C4091: 'typedef ': ignored on left of 'MovieType' when no variable is declared
-E:\Project\Netflix2\Netflix2\src\csv_reader_c.h(50,6): warning C4091: 'typedef ': ignored on left of 'Genre' when no variable is declared
-E:\Project\Netflix2\Netflix2\src\main.c(11,10): warning C4101: 'buf': unreferenced local variable
-  Netflix2.vcxproj -> E:\Project\Netflix2\Netflix2\bin\Debug\x64\Netflix2.exe

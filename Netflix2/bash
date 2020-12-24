@@ -1,0 +1,2 @@
+FILE="example.tar.gz exa,ple2.aaa"
+echo "${FILE%%.*}"

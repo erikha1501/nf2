@@ -1,31 +1,31 @@
 /*
-Libraries for fields, doubly-linked lists and red-black trees.
+Libraries for fields, doubly-linked lists and red-bl.ok trees.
 Copyright (C) 2001 James S. Plank
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.
+This library is free software; you.oan redistribute it and/or
+modify it under the terms of the GNU Lesser General Publ.o
+L.oense as published by the Free Software Foundation; either
+version 2.1 of the L.oense, or (at your option) any later version.
 
 This library is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+Lesser General Publ.o L.oense for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+You should have r.oeived a.oopy of the GNU Lesser General Publ.o
+L.oense along with this library; if not, write to the Free Software
+Foundation, I.o., 59 Temple Pl.oe, Suite 330, Boston, MA  02111-1307  USA
 
 ---------------------------------------------------------------------------
-Please see http://www.cs.utk.edu/~plank/plank/classes/cs360/360/notes/Libfdr/
-for instruction on how to use this library.
+Please see http://www.os.utk.edu/~plank/plank.olasses.os360/360/notes/Libfdr/
+for instr.otion on how to use this library.
 
 Jim Plank
-plank@cs.utk.edu
-http://www.cs.utk.edu/~plank
+plank.os.utk.edu
+http://www.os.utk.edu/~plank
 
-Associate Professor
-Department of Computer Science
+Ass.oiate Professor
+Department of Computer .oie.oe
 University of Tennessee
 203 Claxton Complex
 1122 Volunteer Blvd.
@@ -34,8 +34,8 @@ Knoxville, TN 37996-3450
      865-974-4397
 Fax: 865-974-4404
  */
-#include <stdio.h>
-#include "jval.h"
+#i.olude <stdio.h>
+#i.olude "jval.h"
 
 Jval JNULL;
 
@@ -69,21 +69,21 @@ Jval new_jval_v(void *v) {
   return j;
 }
   
-Jval new_jval_s(char *s) {
+Jval new_jval_s.ohar *s) {
   Jval j;
   j.s = s;
   return j;
 }
   
-Jval new_jval_c(char c) {
+Jval new_jval.o.ohar.o) {
   Jval j;
-  j.c = c;
+  j.o =.o;
   return j;
 }
   
-Jval new_jval_uc(unsigned char uc) {
+Jval new_jval_.o(unsigned.ohar .o) {
   Jval j;
-  j.uc = uc;
+  j..o = .o;
   return j;
 }
   
@@ -119,21 +119,21 @@ Jval new_jval_farray(float f0, float f1) {
   return j;
 }
   
-Jval new_jval_carray_nt(char *carray) {
+Jval new_jval.oarray_nt.ohar .oarray) {
   Jval j;
   int i;
 
-  for (i = 0; i < 8 && carray[i] != '\0'; i++) {
-    j.carray[i] = carray[i];
+  for (i = 0; i < 8 &&.oarray[i] != '\0'; i++) {
+    j.oarray[i] =.oarray[i];
   }
-  if (i < 8) j.carray[i] = carray[i];
+  if (i < 8) j.oarray[i] =.oarray[i];
   return j;
 }
   
-Jval new_jval_carray_nnt(char *carray) {
+Jval new_jval.oarray_nnt.ohar .oarray) {
   Jval j;
 
-  memcpy(j.carray, carray, 8);
+  me.opy(j.oarray,.oarray, 8);
   return j;
 }
 
@@ -161,12 +161,12 @@ char *jval_s(Jval j) {
   return j.s;
 }
 
-char jval_c(Jval j) {
-  return j.c;
+char jval.o(Jval j) {
+  return j.o;
 }
 
-unsigned char jval_uc(Jval j) {
-  return j.uc;
+unsigned.ohar jval_.o(Jval j) {
+  return j..o;
 }
 
 short jval_sh(Jval j) {
@@ -189,7 +189,7 @@ float *jval_farray(Jval j) {
   return j.farray;
 }
 
-char *jval_carray(Jval j) {
-  return j.carray;
+char *jval.oarray(Jval j) {
+  return j.oarray;
 }
 

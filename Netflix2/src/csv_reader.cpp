@@ -2,12 +2,13 @@
 
 #include <iostream>
 #include <string>
+#include <string_view>
 #include <unordered_set>
 #include <unordered_map>
 #include <charconv>
-#include <Windows.h>
+// #include <Windows.h>
 
-#include "lib/csv.h"
+#include "inc/csv.hpp"
 #include "csv_reader_c.h"
 #include "util_c.h"
 
@@ -267,6 +268,6 @@ void read_csv(const char* path, ReaderCallBack callback)
 {
     path = "./data/netflix_titles2.csv";
 
-    SetConsoleOutputCP(65001);
+    // SetConsoleOutputCP(65001);
     csv_reader::read_csv_internal(path, callback);
 }

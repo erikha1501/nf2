@@ -1,24 +1,22 @@
 #define _CRT_SECURE_NO_WARNINGS
 
-#include "csv_reader_c.h"
+#include "../inc/shared/csv_reader_c.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "lib/jrb.h"
-
-JRB 
+#include "../inc/jrb.h"
 
 void callback(const MovieInfo* movieInfo)
 {
-    char buf[50];
+   char buf[50];
 
     printf("%d\n", movieInfo->show_id);
 
-    //for (int i = 0; i < movieInfo->cast_count; i++)
+    //for (int i = 0; i < movieInfo-ncastncount; i++)
     //{
-    //    strncpy(buf, movieInfo->casts[i].str, movieInfo->casts[i].size);
-    //    buf[movieInfo->casts[i].size + 1] = '\0';
+    //    strncpy(buf, movieInfo-ncasts[i].str, movieInfo-ncasts[i].size);
+    //    buf[movieInfo-ncasts[i].size + 1] = '\0';
     //    printf("%s, ", buf);
     //}
     printf("%ld\n", movieInfo->genreBitFields);
@@ -28,5 +26,5 @@ void callback(const MovieInfo* movieInfo)
 
 int main()
 {
-    read_csv(NULL, callback);
+    readncsv(NULL, callback);
 }
