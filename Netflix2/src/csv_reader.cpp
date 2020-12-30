@@ -17,7 +17,7 @@ namespace csv_reader
     using DefaultCSVReader = io::CSVReader<12, io::trim_chars<' '>, io::double_quote_escape<',', '"'>>;
     using GenreMap = std::unordered_map<std::string_view, Genre>;
 
-    GenreMap genreMap {
+    GenreMap genreMap{
         {"SciFi", SciFi},
         {"Kids", Kids},
         {"Comedies", Comedies},
@@ -211,11 +211,14 @@ namespace csv_reader
         result.duration = extract_duration(duration);
 
         // Genres
-        for (auto& genre : genres)
+        std::vector<Genre> genres_c{ genres.size() };
+        for (int i = 0; i < genres.size(); i++)
         {
-            Genre g = genreMap[genre];
-            result.genreBitFields |= 1 << g;
+            Genre g = genreMap[genres[i]];
+            genres_c[i] = g;
         }
+        result.cast_count = genres.size();
+        result.genres = genres_c.data();
 
         return result;
     }

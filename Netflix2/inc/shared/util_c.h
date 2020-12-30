@@ -4,7 +4,7 @@
 extern "C" {
 #endif
 
-    typedef struct
+    typedef struct _c_string_view
     {
         const char* str;
         int size;

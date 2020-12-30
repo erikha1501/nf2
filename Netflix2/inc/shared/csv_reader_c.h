@@ -61,9 +61,12 @@ extern "C" {
         int cast_count;
         c_string_view* casts;
 
+        int genre_count;
+        enum Genre* genres;
+
         int release_year;
         int duration;
-        long genreBitFields;
+        
         c_string_view description;
     } MovieInfo;
 
