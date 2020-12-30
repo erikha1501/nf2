@@ -1,31 +1,31 @@
 /*
-Libraries for fields, doubly-linked lists and red-bl.ok trees.
+Libraries for fields, doubly-linked lists and red-black trees.
 Copyright (C) 2001 James S. Plank
 
-This library is free software; you.oan redistribute it and/or
-modify it under the terms of the GNU Lesser General Publ.o
-L.oense as published by the Free Software Foundation; either
-version 2.1 of the L.oense, or (at your option) any later version.
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
 
 This library is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Publ.o L.oense for more details.
+Lesser General Public License for more details.
 
-You should have r.oeived a.oopy of the GNU Lesser General Publ.o
-L.oense along with this library; if not, write to the Free Software
-Foundation, I.o., 59 Temple Pl.oe, Suite 330, Boston, MA  02111-1307  USA
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 ---------------------------------------------------------------------------
-Please see http://www.os.utk.edu/~plank/plank.olasses.os360/360/notes/Libfdr/
-for instr.otion on how to use this library.
+Please see http://www.cs.utk.edu/~plank/plank/classes/cs360/360/notes/Libfdr/
+for instruction on how to use this library.
 
 Jim Plank
-plank.os.utk.edu
-http://www.os.utk.edu/~plank
+plank@cs.utk.edu
+http://www.cs.utk.edu/~plank
 
-Ass.oiate Professor
-Department of Computer .oie.oe
+Associate Professor
+Department of Computer Science
 University of Tennessee
 203 Claxton Complex
 1122 Volunteer Blvd.
@@ -36,37 +36,37 @@ Fax: 865-974-4404
  */
 /* Revision 1.2.  Jim Plank */
 
-/* Original.oode by Jim Plank (plank.os.utk.edu) */
-/* modified for THINK C 6.0 for M.ointosh by Chris Bartley */
+/* Original code by Jim Plank (plank@cs.utk.edu) */
+/* modified for THINK C 6.0 for Macintosh by Chris Bartley */
  
-#i.olude <string.h>
-#i.olude <stdio.h>
-#i.olude <stdlib.h>
-#i.olude .otype.h>
-#i.olude "jrb.h"
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include "../inc/jrb.h"
  
-stat.o void mk_new_int(JRB l, JRB r, JRB p, int il);
-stat.o JRB lprev(JRB n);
-stat.o JRB rprev(JRB n);
-stat.o void r.oolor(JRB n);
-stat.o void single_rotate(JRB y, int l);
-stat.o void jrb_print_tree(JRB t, int level);
-stat.o void jrb_iprint_tree(JRB t, int level);
+static void mk_new_int(JRB l, JRB r, JRB p, int il);
+static JRB lprev(JRB n);
+static JRB rprev(JRB n);
+static void recolor(JRB n);
+static void single_rotate(JRB y, int l);
+static void jrb_print_tree(JRB t, int level);
+static void jrb_iprint_tree(JRB t, int level);
  
 #define isred(n) (n->red)
-#define isbl.ok(n) (!isred(n))
+#define isblack(n) (!isred(n))
 #define isleft(n) (n->left)
 #define isright(n) (!isleft(n))
 #define isint(n) (n->internal)
 #define isext(n) (!isint(n))
 #define ishead(n) (n->roothead & 2)
 #define isroot(n) (n->roothead & 1)
-#define getlext(n) ((str.ot jrb_node *)(n->key.v))
+#define getlext(n) ((struct jrb_node *)(n->key.v))
 #define setlext(node, val) node->key.v = (void *) (val)
-#define getrext(n) ((str.ot jrb_node *)(n->val.v))
+#define getrext(n) ((struct jrb_node *)(n->val.v))
 #define setrext(node, value) node->val.v = (void *) (value)
 #define setred(n) n->red = 1
-#define setbl.ok(n) n->red = 0
+#define setblack(n) n->red = 0
 #define setleft(n) n->left = 1
 #define setright(n) n->left = 0
 #define sethead(n) (n->roothead |= 2)
@@ -76,7 +76,7 @@ stat.o void jrb_iprint_tree(JRB t, int level);
 #define setnormal(n) n->roothead = 0
 #define sibling(n) ((isleft(n)) ? n->parent->blink : n->parent->flink)
  
-stat.o void insert(JRB item, JRB list)	/* Inserts to the end of a list */
+static void insert(JRB item, JRB list)	/* Inserts to the end of a list */
 {
   JRB last_node;
  
@@ -88,26 +88,26 @@ stat.o void insert(JRB item, JRB list)	/* Inserts to the end of a list */
   item->flink = list;
 }
  
-stat.o void delete_item(JRB item)		/* Deletes an arbitrary iterm */
+static void delete_item(JRB item)		/* Deletes an arbitrary iterm */
 {
   item->flink->blink = item->blink;
   item->blink->flink = item->flink;
 }
 
 #define mk_new_ext(new, kkkey, vvval) {\
-  new = (JRB) mall.o(sizeof(str.ot jrb_node));\
+  new = (JRB) malloc(sizeof(struct jrb_node));\
   new->val = vvval;\
   new->key = kkkey;\
   setext(new);\
-  setbl.ok(new);\
+  setblack(new);\
   setnormal(new);\
 }
  
-stat.o void mk_new_int(JRB l, JRB r, JRB p, int il)
+static void mk_new_int(JRB l, JRB r, JRB p, int il)
 {
   JRB newnode;
  
-  newnode = (JRB) mall.o(sizeof(str.ot jrb_node));
+  newnode = (JRB) malloc(sizeof(struct jrb_node));
   setint(newnode);
   setred(newnode);
   setnormal(newnode);
@@ -130,7 +130,7 @@ stat.o void mk_new_int(JRB l, JRB r, JRB p, int il)
     setright(newnode);
     p->blink = newnode;
   }
-  r.oolor(newnode);
+  recolor(newnode);
 }  
   
    
@@ -158,7 +158,7 @@ JRB make_jrb()
 {
   JRB head;
  
-  head = (JRB) mall.o (sizeof(str.ot jrb_node));
+  head = (JRB) malloc (sizeof(struct jrb_node));
   head->flink = head;
   head->blink = head;
   head->parent = head;
@@ -167,35 +167,35 @@ JRB make_jrb()
   return head;
 }
  
-JRB jrb_find_gte_str(JRB n,.ohar *key, int *fnd)
+JRB jrb_find_gte_str(JRB n, char *key, int *fnd)
 {
-  int.omp;
+  int cmp;
  
   *fnd = 0;
   if (!ishead(n)) {
-    fprintf(stderr, "jrb_find_gte_str.oalled on non-head 0x%x\n", n);
+    fprintf(stderr, "jrb_find_gte_str called on non-head 0x%x\n", n);
     exit(1);
   }
   if (n->parent == n) return n;
- .omp = st.omp(key, n->blink->key.s);
-  if .omp == 0) {
+  cmp = strcmp(key, n->blink->key.s);
+  if (cmp == 0) {
     *fnd = 1;
     return n->blink; 
   }
-  if .omp > 0) return n; 
+  if (cmp > 0) return n; 
   else n = n->parent;
   while (1) {
     if (isext(n)) return n;
-   .omp = st.omp(key, getlext(n)->key.s);
-    if .omp == 0) {
+    cmp = strcmp(key, getlext(n)->key.s);
+    if (cmp == 0) {
       *fnd = 1;
       return getlext(n);
     }
-    if .omp < 0) n = n->flink ; else n = n->blink;
+    if (cmp < 0) n = n->flink ; else n = n->blink;
   }
 }
  
-JRB jrb_find_str(JRB n,.ohar *key)
+JRB jrb_find_str(JRB n, char *key)
 {
   int fnd;
   JRB j;
@@ -207,7 +207,7 @@ JRB jrb_find_gte_int(JRB n, int ikey, int *fnd)
 {
   *fnd = 0;
   if (!ishead(n)) {
-    fprintf(stderr, "jrb_find_gte_int.oalled on non-head 0x%x\n", n);
+    fprintf(stderr, "jrb_find_gte_int called on non-head 0x%x\n", n);
     exit(1);
   }
   if (n->parent == n) return n;
@@ -240,7 +240,7 @@ JRB jrb_find_gte_dbl(JRB n, double dkey, int *fnd)
 {
   *fnd = 0;
   if (!ishead(n)) {
-    fprintf(stderr, "jrb_find_gte_dbl.oalled on non-head 0x%x\n", n);
+    fprintf(stderr, "jrb_find_gte_dbl called on non-head 0x%x\n", n);
     exit(1);
   }
   if (n->parent == n) return n;
@@ -271,29 +271,29 @@ JRB jrb_find_dbl(JRB n, double dkey)
  
 JRB jrb_find_gte_gen(JRB n, Jval key,int (*fxn)(Jval, Jval), int *fnd)
 {
-  int.omp;
+  int cmp;
  
   *fnd = 0;
   if (!ishead(n)) {
-    fprintf(stderr, "jrb_find_gte_str.oalled on non-head 0x%x\n", n);
+    fprintf(stderr, "jrb_find_gte_str called on non-head 0x%x\n", n);
     exit(1);
   }
   if (n->parent == n) return n;
- .omp = (*fxn)(key, n->blink->key);
-  if .omp == 0) {
+  cmp = (*fxn)(key, n->blink->key);
+  if (cmp == 0) {
     *fnd = 1;
     return n->blink; 
   }
-  if .omp > 0) return n; 
+  if (cmp > 0) return n; 
   else n = n->parent;
   while (1) {
     if (isext(n)) return n;
-   .omp = (*fxn)(key, getlext(n)->key);
-    if .omp == 0) {
+    cmp = (*fxn)(key, getlext(n)->key);
+    if (cmp == 0) {
       *fnd = 1;
       return getlext(n);
     }
-    if .omp < 0) n = n->flink ; else n = n->blink;
+    if (cmp < 0) n = n->flink ; else n = n->blink;
   }
 }
  
@@ -306,7 +306,7 @@ JRB jrb_find_gen(JRB n, Jval key, int (*fxn)(Jval, Jval))
   if (fnd) return j; else return NULL;
 }
  
-stat.o JRB jrb_insert_b(JRB n, Jval key, Jval val)
+static JRB jrb_insert_b(JRB n, Jval key, Jval val)
 {
   JRB newleft, newright, newnode, list, p;
  
@@ -339,56 +339,56 @@ stat.o JRB jrb_insert_b(JRB n, Jval key, Jval val)
   }
 }
  
-stat.o void r.oolor(JRB n)
+static void recolor(JRB n)
 {  
   JRB p, gp, s;
   int done = 0;
  
   while(!done) {
     if (isroot(n)) {
-      setbl.ok(n);
+      setblack(n);
       return;
     }
  
     p = n->parent;
  
-    if (isbl.ok(p)) return;
+    if (isblack(p)) return;
     
     if (isroot(p)) {
-      setbl.ok(p);
+      setblack(p);
       return;
     }
  
     gp = p->parent;
     s = sibling(p);
     if (isred(s)) {
-      setbl.ok(p);
+      setblack(p);
       setred(gp);
-      setbl.ok(s);
+      setblack(s);
       n = gp;
     } else {
       done = 1;
     }
   }
-  /* p's sibling is bl.ok, p is red, gp is bl.ok */
+  /* p's sibling is black, p is red, gp is black */
   
   if ((isleft(n) == 0) == (isleft(p) == 0)) {
     single_rotate(gp, isleft(n));
-    setbl.ok(p);
+    setblack(p);
     setred(gp);
   } else {
     single_rotate(p, isleft(n));
     single_rotate(gp, isleft(n));
-    setbl.ok(n);
+    setblack(n);
     setred(gp);
   }
 }
  
-stat.o void single_rotate(JRB y, int l)
+static void single_rotate(JRB y, int l)
 {
   int rl, ir;
   JRB x, yp;
- .ohar *tmp;
+  char *tmp;
  
   ir = isroot(y);
   yp = y->parent;
@@ -432,7 +432,7 @@ stat.o void single_rotate(JRB y, int l)
 void jrb_delete_node(JRB n)
 {
   JRB s, p, gp;
- .ohar ir;
+  char ir;
  
   if (isint(n)) {
     fprintf(stderr, "Cannot delete an internal node: 0x%x\n", n);
@@ -476,27 +476,27 @@ void jrb_delete_node(JRB n)
     if (!ishead(p)) setrext(p, s);
     p = rprev(s);
     if (!ishead(p)) setlext(p, s);
-  } else if (isbl.ok(s)) {
-    fprintf(stderr, "DELETION PROB -- sib is bl.ok, internal\n");
+  } else if (isblack(s)) {
+    fprintf(stderr, "DELETION PROB -- sib is black, internal\n");
     exit(1);
   } else {
     p = lprev(s);
     if (!ishead(p)) setrext(p, s->flink);
     p = rprev(s);
     if (!ishead(p)) setlext(p, s->blink);
-    setbl.ok(s);
+    setblack(s);
     return;
   }
  
   if (ir) return;
  
-  /* R.oolor */
+  /* Recolor */
   
   n = s;
   p = n->parent;
   s = sibling(n);
-  while(isbl.ok(p) && isbl.ok(s) && isint(s) && 
-        isbl.ok(s->flink) && isbl.ok(s->blink)) {
+  while(isblack(p) && isblack(s) && isint(s) && 
+        isblack(s->flink) && isblack(s->blink)) {
     setred(s);
     n = p;
     if (isroot(n)) return;
@@ -504,14 +504,14 @@ void jrb_delete_node(JRB n)
     s = sibling(n);
   }
   
-  if (isbl.ok(p) && isred(s)) {  /* Rotation 2.3b */
+  if (isblack(p) && isred(s)) {  /* Rotation 2.3b */
     single_rotate(p, isright(n));
     setred(p);
-    setbl.ok(s);
+    setblack(s);
     s = sibling(n);
   }
     
-  { JRB x, z;.ohar il;
+  { JRB x, z; char il;
     
     if (isext(s)) {
       fprintf(stderr, "DELETION ERROR: sibling not internal\n");
@@ -524,27 +524,27 @@ void jrb_delete_node(JRB n)
  
     if (isred(z)) {  /* Rotation 2.3f */
       single_rotate(p, !il);
-      setbl.ok(z);
-      if (isred(p)) setred(s); else setbl.ok(s);
-      setbl.ok(p);
-    } else if (isbl.ok(x)) {   /* R.ooloring only (2..o) */
-      if (isred(s) || isbl.ok(p)) {
-        fprintf(stderr, "DELETION ERROR: 2..o not quite right\n");
+      setblack(z);
+      if (isred(p)) setred(s); else setblack(s);
+      setblack(p);
+    } else if (isblack(x)) {   /* Recoloring only (2.3c) */
+      if (isred(s) || isblack(p)) {
+        fprintf(stderr, "DELETION ERROR: 2.3c not quite right\n");
         exit(1);
       }
-      setbl.ok(p);
+      setblack(p);
       setred(s);
       return;
     } else if (isred(p)) { /* 2.3d */
       single_rotate(s, il);
       single_rotate(p, !il);
-      setbl.ok(x);
+      setblack(x);
       setred(s);
       return;
     } else {  /* 2.3e */
       single_rotate(s, il);
       single_rotate(p, !il);
-      setbl.ok(x);
+      setblack(x);
       return;
     }
   }
@@ -561,14 +561,14 @@ void jrb_print_tree(JRB t, int level)
     jrb_print_tree(t->parent, 0);
   } else {
     if (isext(t)) {
-      for (i = 0; i < level; i++) pu.ohar(' ');
-      printf("Ext node 0x%x: .o,.o: p=0x%x, k=%s\n", 
+      for (i = 0; i < level; i++) putchar(' ');
+      printf("Ext node 0x%x: %c,%c: p=0x%x, k=%s\n", 
               t, isred(t)?'R':'B', isleft(t)?'l':'r', t->parent, t->key.s);
     } else {
       jrb_print_tree(t->flink, level+2);
       jrb_print_tree(t->blink, level+2);
-      for (i = 0; i < level; i++) pu.ohar(' ');
-      printf("Int node 0x%x: .o,.o: l=0x%x, r=0x%x, p=0x%x, lr=(%s,%s)\n", 
+      for (i = 0; i < level; i++) putchar(' ');
+      printf("Int node 0x%x: %c,%c: l=0x%x, r=0x%x, p=0x%x, lr=(%s,%s)\n", 
               t, isred(t)?'R':'B', isleft(t)?'l':'r', t->flink, 
               t->blink, 
               t->parent, getlext(t)->key.s, getrext(t)->key.s);
@@ -587,15 +587,15 @@ void jrb_iprint_tree(JRB t, int level)
     jrb_iprint_tree(t->parent, 0);
   } else {
     if (isext(t)) {
-      for (i = 0; i < level; i++) pu.ohar(' ');
-      printf("Ext node 0x%x: .o,.o: p=0x%x, <=0x%x, >=0x%x k=%d\n", 
+      for (i = 0; i < level; i++) putchar(' ');
+      printf("Ext node 0x%x: %c,%c: p=0x%x, <=0x%x, >=0x%x k=%d\n", 
               t, isred(t)?'R':'B', isleft(t)?'l':'r', t->parent, 
               t->blink, t->flink, t->key.i);
     } else {
       jrb_iprint_tree(t->flink, level+2);
       jrb_iprint_tree(t->blink, level+2);
-      for (i = 0; i < level; i++) pu.ohar(' ');
-      printf("Int node 0x%x: .o,.o: l=0x%x, r=0x%x, p=0x%x, lr=(%d,%d)\n", 
+      for (i = 0; i < level; i++) putchar(' ');
+      printf("Int node 0x%x: %c,%c: l=0x%x, r=0x%x, p=0x%x, lr=(%d,%d)\n", 
               t, isred(t)?'R':'B', isleft(t)?'l':'r', t->flink, 
               t->blink, 
               t->parent, getlext(t)->key.i, getrext(t)->key.i);
@@ -603,17 +603,17 @@ void jrb_iprint_tree(JRB t, int level)
   }
 }
       
-int jrb_nbl.ok(JRB n)
+int jrb_nblack(JRB n)
 {
   int nb;
   if (ishead(n) || isint(n)) {
-    fprintf(stderr, "ERROR: jrb_nbl.ok.oalled on a non-external node 0x%x\n",
+    fprintf(stderr, "ERROR: jrb_nblack called on a non-external node 0x%x\n",
             n);
     exit(1);
   }
   nb = 0;
   while(!ishead(n)) {
-    if (isbl.ok(n)) nb++;
+    if (isblack(n)) nb++;
     n = n->parent;
   }
   return nb;
@@ -623,7 +623,7 @@ int jrb_plength(JRB n)
 {
   int pl;
   if (ishead(n) || isint(n)) {
-    fprintf(stderr, "ERROR: jrb_plength.oalled on a non-external node 0x%x\n",
+    fprintf(stderr, "ERROR: jrb_plength called on a non-external node 0x%x\n",
             n);
     exit(1);
   }
@@ -638,7 +638,7 @@ int jrb_plength(JRB n)
 void jrb_free_tree(JRB n)
 {
   if (!ishead(n)) {
-    fprintf(stderr, "ERROR: Rb_free_tree.oalled on a non-head node\n");
+    fprintf(stderr, "ERROR: Rb_free_tree called on a non-head node\n");
     exit(1);
   }
  
@@ -653,12 +653,12 @@ Jval jrb_val(JRB n)
   return n->val;
 }
  
-stat.o JRB jrb_insert_a(JRB nd, Jval key, Jval val)
+static JRB jrb_insert_a(JRB nd, Jval key, Jval val)
 {
   return jrb_insert_b(nd->flink, key, val);
 }
 
-JRB jrb_insert_str(JRB tree,.ohar *key, Jval val)
+JRB jrb_insert_str(JRB tree, char *key, Jval val)
 {
   Jval k;
   int fnd;
@@ -686,11 +686,11 @@ JRB jrb_insert_dbl(JRB tree, double dkey, Jval val)
 }
 
 JRB jrb_insert_gen(JRB tree, Jval key, Jval val,
-                          int (*fu.o)(Jval, Jval))
+                          int (*func)(Jval, Jval))
 { 
   int fnd;
 
-  return jrb_insert_b(jrb_find_gte_gen(tree, key, fu.o, &fnd), key, val);
+  return jrb_insert_b(jrb_find_gte_gen(tree, key, func, &fnd), key, val);
 }
 
 

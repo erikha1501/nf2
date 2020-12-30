@@ -8,9 +8,9 @@
 #include <charconv>
 // #include <Windows.h>
 
-#include "inc/csv.hpp"
-#include "csv_reader_c.h"
-#include "util_c.h"
+#include "../inc/csv.hpp"
+#include "../inc/shared/csv_reader_c.h"
+#include "../inc/shared/util_c.h"
 
 namespace csv_reader
 {
@@ -187,20 +187,22 @@ namespace csv_reader
         result.title = to_c_string_view(title);
 
         // Directors
+        std::vector<c_string_view> directors_c{ directors.size() };
         result.director_count = directors.size();
-        result.directors = (c_string_view*)malloc(sizeof(c_string_view) * result.director_count);
         for (int i = 0; i < directors.size(); i++)
         {
-            result.directors[i] = to_c_string_view(directors[i]);
+            directors_c[i] = to_c_string_view(directors[i]);
         }
+        result.directors = directors_c.data();
 
         // Casts
+        std::vector<c_string_view> casts_c{ casts.size() };
         result.cast_count = casts.size();
-        result.casts = (c_string_view*)malloc(sizeof(c_string_view) * result.cast_count);
         for (int i = 0; i < casts.size(); i++)
         {
-            result.casts[i] = to_c_string_view(casts[i]);
+            casts_c[i] = to_c_string_view(casts[i]);
         }
+        result.casts = casts_c.data();
 
         // Release year
         result.release_year = release_year;
@@ -266,8 +268,6 @@ namespace csv_reader
 
 void read_csv(const char* path, ReaderCallBack callback)
 {
-    path = "./data/netflix_titles2.csv";
-
     // SetConsoleOutputCP(65001);
     csv_reader::read_csv_internal(path, callback);
 }

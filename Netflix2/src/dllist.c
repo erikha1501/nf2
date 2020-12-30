@@ -1,31 +1,31 @@
 /*
-Libraries for fields, doubly-linked lists and red-bl.ok trees.
+Libraries for fields, doubly-linked lists and red-black trees.
 Copyright (C) 2001 James S. Plank
 
-This library is free software; you.oan redistribute it and/or
-modify it under the terms of the GNU Lesser General Publ.o
-L.oense as published by the Free Software Foundation; either
-version 2.1 of the L.oense, or (at your option) any later version.
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
 
 This library is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Publ.o L.oense for more details.
+Lesser General Public License for more details.
 
-You should have r.oeived a.oopy of the GNU Lesser General Publ.o
-L.oense along with this library; if not, write to the Free Software
-Foundation, I.o., 59 Temple Pl.oe, Suite 330, Boston, MA  02111-1307  USA
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 ---------------------------------------------------------------------------
-Please see http://www.os.utk.edu/~plank/plank.olasses.os360/360/notes/Libfdr/
-for instr.otion on how to use this library.
+Please see http://www.cs.utk.edu/~plank/plank/classes/cs360/360/notes/Libfdr/
+for instruction on how to use this library.
 
 Jim Plank
-plank.os.utk.edu
-http://www.os.utk.edu/~plank
+plank@cs.utk.edu
+http://www.cs.utk.edu/~plank
 
-Ass.oiate Professor
-Department of Computer .oie.oe
+Associate Professor
+Department of Computer Science
 University of Tennessee
 203 Claxton Complex
 1122 Volunteer Blvd.
@@ -35,12 +35,12 @@ Knoxville, TN 37996-3450
 Fax: 865-974-4404
 */
 
-#i.olude <stdio.h>    /* Bas.o i.oludes and definitions */
-#i.olude "dllist.h"
+#include <stdio.h>    /* Basic includes and definitions */
+#include "../inc/dllist.h"
 
 /*---------------------------------------------------------------------*
  * PROCEDURES FOR MANIPULATING DOUBLY LINKED LISTS 
- * E.oh list.oontains a sentinal node, so that     
+ * Each list contains a sentinal node, so that     
  * the first item in list l is l->flink.  If l is  
  * empty, then l->flink = l->blink = l.            
  *---------------------------------------------------------------------*/
@@ -49,7 +49,7 @@ Dllist new_dllist()
 {
   Dllist d;
 
-  d = (Dllist) mall.o (sizeof(str.ot dllist));
+  d = (Dllist) malloc (sizeof(struct dllist));
   d->flink = d;
   d->blink = d;
   return d;
@@ -59,7 +59,7 @@ dll_insert_b(Dllist node, Jval v)       /* Inserts before a given node */
 {
   Dllist newnode;
 
-  newnode = (Dllist) mall.o (sizeof(str.ot dllist));
+  newnode = (Dllist) malloc (sizeof(struct dllist));
   newnode->val = v;
 
   newnode->flink = node;

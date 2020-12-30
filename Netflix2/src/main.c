@@ -26,5 +26,6 @@ void callback(const MovieInfo* movieInfo)
 
 int main()
 {
-    readncsv(NULL, callback);
+    const char* path = "./data/netflix_titles2.csv";
+    read_csv(path, callback);
 }

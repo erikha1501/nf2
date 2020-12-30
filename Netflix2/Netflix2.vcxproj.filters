@@ -15,39 +15,39 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\lib\csv.h">
+    <ClInclude Include="inc\shared\csv_reader_c.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\csv_reader_c.h">
+    <ClInclude Include="inc\shared\util_c.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\util_c.h">
+    <ClInclude Include="inc\csv.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\lib\dllist.h">
+    <ClInclude Include="inc\dllist.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\lib\jrb.h">
+    <ClInclude Include="inc\jrb.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\lib\jval.h">
+    <ClInclude Include="inc\jval.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\main.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\csv_reader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\lib\dllist.c">
+    <ClCompile Include="src\dllist.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\lib\jrb.c">
+    <ClCompile Include="src\jrb.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\lib\jval.c">
+    <ClCompile Include="src\jval.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
