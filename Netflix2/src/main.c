@@ -169,9 +169,9 @@ CastEntry *database_insert_cast(Database *database, const char *name)
 {
 }
 
-MovieEntry* database_insert_movie(Database* database, const MovieInfo* movieInfo)
+MovieEntry *database_insert_movie(Database *database, const MovieInfo *movieInfo)
 {
-    MovieEntry* movie = &database->movies[database->movies_count++];
+    MovieEntry *movie = &database->movies[database->movies_count++];
     movie->show_id = movieInfo->show_id;
     movie->description = duplicate_string(movieInfo->description);
     movie->duration = movieInfo->duration;
@@ -180,7 +180,7 @@ MovieEntry* database_insert_movie(Database* database, const MovieInfo* movieInfo
 
     // Add genres
     movie->genre_count = movieInfo->genre_count;
-    movie->genres = (GenreEntry**)malloc(sizeof(GenreEntry**) * movie->genre_count);
+    movie->genres = (GenreEntry **)malloc(sizeof(GenreEntry **) * movie->genre_count);
     for (int i = 0; i < movieInfo->genre_count; i++)
     {
         // Genre value is the index into database-genres
@@ -189,24 +189,22 @@ MovieEntry* database_insert_movie(Database* database, const MovieInfo* movieInfo
 
     // Insert directors
     movie->director_count = movieInfo->director_count;
-    movie->directors = (DirectorEntry**)malloc(sizeof(DirectorEntry*) * movie->director_count);
+    movie->directors = (DirectorEntry **)malloc(sizeof(DirectorEntry *) * movie->director_count);
     for (int i = 0; i < movieInfo->directors->size; i++)
     {
-        DirectorEntry* insertedDirector = database_insert_director(database, duplicate_string(movieInfo->directors[i]));
+        DirectorEntry *insertedDirector = database_insert_director(database, duplicate_string(movieInfo->directors[i]));
         movie->directors[i] = insertedDirector;
     }
 
     // Insert casts
     movie->cast_count = movieInfo->cast_count;
-    movie->casts = (CastEntry**)malloc(sizeof(CastEntry*) * movie->cast_count);
+    movie->casts = (CastEntry **)malloc(sizeof(CastEntry *) * movie->cast_count);
     for (int i = 0; i < movieInfo->casts->size; i++)
     {
-        CastEntry* insertedCast = database_insert_cast(database, duplicate_string(movieInfo->casts[i]));
+        CastEntry *insertedCast = database_insert_cast(database, duplicate_string(movieInfo->casts[i]));
         movie->casts[i] = insertedCast;
     }
 }
-
-
 
 
 void callback(const MovieInfo* movieInfo)
