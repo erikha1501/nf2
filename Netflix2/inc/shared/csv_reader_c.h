@@ -6,13 +6,13 @@ extern "C" {
 
 #include "util_c.h"
 
-    typedef enum MovieType
+    enum MovieType
     {
         Movie,
         TVShow
     };
 
-    typedef enum Genre
+    enum Genre
     {
         SciFi,
         Kids,
@@ -56,13 +56,13 @@ extern "C" {
         c_string_view title;
 
         int director_count;
-        c_string_view* directors;
+        const c_string_view* directors;
 
         int cast_count;
-        c_string_view* casts;
+        const c_string_view* casts;
 
         int genre_count;
-        enum Genre* genres;
+        const enum Genre* genres;
 
         int release_year;
         int duration;

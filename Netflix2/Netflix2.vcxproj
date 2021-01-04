@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\csv.hpp" />
+    <ClInclude Include="inc\database.h" />
     <ClInclude Include="inc\dllist.h" />
     <ClInclude Include="inc\jrb.h" />
     <ClInclude Include="inc\jval.h" />
@@ -28,6 +29,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\csv_reader.cpp" />
+    <ClCompile Include="src\database.c" />
     <ClCompile Include="src\dllist.c" />
     <ClCompile Include="src\jrb.c" />
     <ClCompile Include="src\jval.c" />

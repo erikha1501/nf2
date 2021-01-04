@@ -160,11 +160,11 @@ namespace csv_reader
         int showId,
         const std::string_view type,
         const std::string_view title,
-        const std::vector<std::string_view>& directors,
-        const std::vector<std::string_view>& casts,
+        const std::vector<c_string_view>& directors_c,
+        const std::vector<c_string_view>& casts_c,
         int release_year,
         const std::string_view duration,
-        const std::vector<std::string_view>& genres)
+        const std::vector<Genre>& genres_c)
     {
         using namespace std::literals;
 
@@ -187,22 +187,16 @@ namespace csv_reader
         result.title = to_c_string_view(title);
 
         // Directors
-        std::vector<c_string_view> directors_c{ directors.size() };
-        result.director_count = directors.size();
-        for (int i = 0; i < directors.size(); i++)
-        {
-            directors_c[i] = to_c_string_view(directors[i]);
-        }
+        result.director_count = directors_c.size();
         result.directors = directors_c.data();
 
         // Casts
-        std::vector<c_string_view> casts_c{ casts.size() };
-        result.cast_count = casts.size();
-        for (int i = 0; i < casts.size(); i++)
-        {
-            casts_c[i] = to_c_string_view(casts[i]);
-        }
+        result.cast_count = casts_c.size();
         result.casts = casts_c.data();
+
+        // Genres
+        result.genre_count = genres_c.size();
+        result.genres = genres_c.data();
 
         // Release year
         result.release_year = release_year;
@@ -210,15 +204,6 @@ namespace csv_reader
         // Duration
         result.duration = extract_duration(duration);
 
-        // Genres
-        std::vector<Genre> genres_c{ genres.size() };
-        for (int i = 0; i < genres.size(); i++)
-        {
-            Genre g = genreMap[genres[i]];
-            genres_c[i] = g;
-        }
-        result.cast_count = genres.size();
-        result.genres = genres_c.data();
 
         return result;
     }
@@ -247,15 +232,39 @@ namespace csv_reader
                 }
 
                 int showId = entry.show_id;
+                int release_year = entry.release_year;
+                std::string_view duration{ entry.duration };
                 std::string_view type{ entry.type };
                 std::string_view title{ entry.title };
                 std::vector<std::string_view> directors = string_view_split(entry.director);
                 std::vector<std::string_view> casts = string_view_split(entry.cast);
-                int release_year = entry.release_year;
-                std::string_view duration{ entry.duration };
                 std::vector<std::string_view> genres = string_view_split(entry.listed_in);
 
-                MovieInfo movieInfo = create_movie_info(showId, trim(type), trim(title), directors, casts, release_year, trim(duration), genres);
+                // Convert vector<string_view> to c counter part
+                std::vector<c_string_view> directors_c{ directors.size() };
+                for (int i = 0; i < directors.size(); i++)
+                {
+                    directors_c[i] = to_c_string_view(directors[i]);
+                }
+
+                // Convert vector<string_view> to c counterpart
+                std::vector<c_string_view> casts_c{ casts.size() };
+                for (int i = 0; i < casts.size(); i++)
+                {
+                    casts_c[i] = to_c_string_view(casts[i]);
+                }
+
+                // Convert vector<string_view> to c counterpart
+                std::vector<Genre> genres_c{ genres.size() };
+                for (int i = 0; i < genres.size(); i++)
+                {
+                    Genre g = genreMap[genres[i]];
+                    genres_c[i] = g;
+                }
+
+                MovieInfo movieInfo = create_movie_info(showId, trim(type), trim(title), 
+                    directors_c, casts_c, release_year, trim(duration), genres_c);
+
                 callback(&movieInfo);
 
                 count++;
