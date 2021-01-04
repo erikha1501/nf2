@@ -4,8 +4,8 @@ SOURCE_DIR := src
 
 CC := gcc
 CXX := g++
-CFLAGS := -I$(IDIR)
-CXXFLAGS := -I$(IDIR)
+CFLAGS := -pthread -I$(IDIR)
+CXXFLAGS := -pthread -std=c++17 -I$(IDIR)
 
 ODIR := obj
 C_ODIR := $(ODIR)/c
@@ -31,4 +31,5 @@ $(BINDIR)/app: $(OBJS)
 .PHONY: clean
 
 clean:
-	rm -f $(ODIR)/*.o
+	rm -rf $(ODIR)/c/*.o
+	rm -rf $(ODIR)/cxx/*.o
