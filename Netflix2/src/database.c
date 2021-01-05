@@ -2,8 +2,8 @@
 
 #include "../inc/database.h"
 
-#include <stdlib.h>
 #include <assert.h>
+#include <stdlib.h>
 #include <string.h>
 
 GenreEntry* database_find_genre_entry(Database* database, enum Genre genre);
@@ -29,7 +29,7 @@ void database_init(Database* database)
     database->directors = (DirectorEntry*)malloc(sizeof(DirectorEntry) * database->directors_capacity);
 
     // Casts
-    database->casts_capacity = 26000;
+    database->casts_capacity = 50000;
     database->casts_count = 0;
     database->casts = (CastEntry*)malloc(sizeof(CastEntry) * database->casts_capacity);
 
@@ -39,39 +39,39 @@ void database_init(Database* database)
     database->genres = (GenreEntry*)malloc(sizeof(GenreEntry) * database->genres_capacity);
 
     // Populate genres list
-    database->genres[0] = (GenreEntry){ .name = "SciFi", .movies = new_dllist() };
-    database->genres[1] = (GenreEntry){ .name = "Kids", .movies = new_dllist() };
-    database->genres[2] = (GenreEntry){ .name = "Comedies", .movies = new_dllist() };
-    database->genres[3] = (GenreEntry){ .name = "Standup", .movies = new_dllist() };
-    database->genres[4] = (GenreEntry){ .name = "Fantasy", .movies = new_dllist() };
-    database->genres[5] = (GenreEntry){ .name = "Crime", .movies = new_dllist() };
-    database->genres[6] = (GenreEntry){ .name = "Spanish", .movies = new_dllist() };
-    database->genres[7] = (GenreEntry){ .name = "International", .movies = new_dllist() };
-    database->genres[8] = (GenreEntry){ .name = "Thrillers", .movies = new_dllist() };
-    database->genres[9] = (GenreEntry){ .name = "Comedy", .movies = new_dllist() };
-    database->genres[10] = (GenreEntry){ .name = "Docuseries", .movies = new_dllist() };
-    database->genres[11] = (GenreEntry){ .name = "Science", .movies = new_dllist() };
-    database->genres[12] = (GenreEntry){ .name = "Nature", .movies = new_dllist() };
-    database->genres[13] = (GenreEntry){ .name = "Action", .movies = new_dllist() };
-    database->genres[14] = (GenreEntry){ .name = "Adventure", .movies = new_dllist() };
-    database->genres[15] = (GenreEntry){ .name = "Dramas", .movies = new_dllist() };
-    database->genres[16] = (GenreEntry){ .name = "Cult", .movies = new_dllist() };
-    database->genres[17] = (GenreEntry){ .name = "Indie", .movies = new_dllist() };
-    database->genres[18] = (GenreEntry){ .name = "Romantic", .movies = new_dllist() };
-    database->genres[19] = (GenreEntry){ .name = "Documentaries", .movies = new_dllist() };
-    database->genres[20] = (GenreEntry){ .name = "Horror", .movies = new_dllist() };
-    database->genres[21] = (GenreEntry){ .name = "Mysteries", .movies = new_dllist() };
-    database->genres[22] = (GenreEntry){ .name = "British", .movies = new_dllist() };
-    database->genres[23] = (GenreEntry){ .name = "Movies", .movies = new_dllist() };
-    database->genres[24] = (GenreEntry){ .name = "Music", .movies = new_dllist() };
-    database->genres[25] = (GenreEntry){ .name = "Reality", .movies = new_dllist() };
-    database->genres[26] = (GenreEntry){ .name = "Anime", .movies = new_dllist() };
-    database->genres[27] = (GenreEntry){ .name = "Teen", .movies = new_dllist() };
-    database->genres[28] = (GenreEntry){ .name = "Sports", .movies = new_dllist() };
-    database->genres[29] = (GenreEntry){ .name = "Spirituality", .movies = new_dllist() };
-    database->genres[30] = (GenreEntry){ .name = "Korean", .movies = new_dllist() };
-    database->genres[31] = (GenreEntry){ .name = "LGBTQ", .movies = new_dllist() };
-    database->genres[32] = (GenreEntry){ .name = "Classic", .movies = new_dllist() };
+    database->genres[0] = (GenreEntry){.internal_id = 0, .name = "SciFi", .movies = new_dllist()};
+    database->genres[1] = (GenreEntry){.internal_id = 1, .name = "Kids", .movies = new_dllist()};
+    database->genres[2] = (GenreEntry){.internal_id = 2, .name = "Comedies", .movies = new_dllist()};
+    database->genres[3] = (GenreEntry){.internal_id = 3, .name = "Standup", .movies = new_dllist()};
+    database->genres[4] = (GenreEntry){.internal_id = 4, .name = "Fantasy", .movies = new_dllist()};
+    database->genres[5] = (GenreEntry){.internal_id = 5, .name = "Crime", .movies = new_dllist()};
+    database->genres[6] = (GenreEntry){.internal_id = 6, .name = "Spanish", .movies = new_dllist()};
+    database->genres[7] = (GenreEntry){.internal_id = 7, .name = "International", .movies = new_dllist()};
+    database->genres[8] = (GenreEntry){.internal_id = 8, .name = "Thrillers", .movies = new_dllist()};
+    database->genres[9] = (GenreEntry){.internal_id = 9, .name = "Comedy", .movies = new_dllist()};
+    database->genres[10] = (GenreEntry){.internal_id = 10, .name = "Docuseries", .movies = new_dllist()};
+    database->genres[11] = (GenreEntry){.internal_id = 11, .name = "Science", .movies = new_dllist()};
+    database->genres[12] = (GenreEntry){.internal_id = 12, .name = "Nature", .movies = new_dllist()};
+    database->genres[13] = (GenreEntry){.internal_id = 13, .name = "Action", .movies = new_dllist()};
+    database->genres[14] = (GenreEntry){.internal_id = 14, .name = "Adventure", .movies = new_dllist()};
+    database->genres[15] = (GenreEntry){.internal_id = 15, .name = "Dramas", .movies = new_dllist()};
+    database->genres[16] = (GenreEntry){.internal_id = 16, .name = "Cult", .movies = new_dllist()};
+    database->genres[17] = (GenreEntry){.internal_id = 17, .name = "Indie", .movies = new_dllist()};
+    database->genres[18] = (GenreEntry){.internal_id = 18, .name = "Romantic", .movies = new_dllist()};
+    database->genres[19] = (GenreEntry){.internal_id = 19, .name = "Documentaries", .movies = new_dllist()};
+    database->genres[20] = (GenreEntry){.internal_id = 20, .name = "Horror", .movies = new_dllist()};
+    database->genres[21] = (GenreEntry){.internal_id = 21, .name = "Mysteries", .movies = new_dllist()};
+    database->genres[22] = (GenreEntry){.internal_id = 22, .name = "British", .movies = new_dllist()};
+    database->genres[23] = (GenreEntry){.internal_id = 23, .name = "Movies", .movies = new_dllist()};
+    database->genres[24] = (GenreEntry){.internal_id = 24, .name = "Music", .movies = new_dllist()};
+    database->genres[25] = (GenreEntry){.internal_id = 25, .name = "Reality", .movies = new_dllist()};
+    database->genres[26] = (GenreEntry){.internal_id = 26, .name = "Anime", .movies = new_dllist()};
+    database->genres[27] = (GenreEntry){.internal_id = 27, .name = "Teen", .movies = new_dllist()};
+    database->genres[28] = (GenreEntry){.internal_id = 28, .name = "Sports", .movies = new_dllist()};
+    database->genres[29] = (GenreEntry){.internal_id = 29, .name = "Spirituality", .movies = new_dllist()};
+    database->genres[30] = (GenreEntry){.internal_id = 30, .name = "Korean", .movies = new_dllist()};
+    database->genres[31] = (GenreEntry){.internal_id = 31, .name = "LGBTQ", .movies = new_dllist()};
+    database->genres[32] = (GenreEntry){.internal_id = 32, .name = "Classic", .movies = new_dllist()};
     database->genres_count = 33;
 
     // Initialize lookup trees
@@ -85,11 +85,14 @@ void database_init(Database* database)
     {
         jrb_insert_str(database->genres_name_lookup, database->genres[i].name, new_jval_v(database->genres + i));
     }
+
+    // Initialize movies similarity map
+    database->movies_similarity_map = NULL;
 }
 
 const char* string_view_dup(const c_string_view str)
 {
-    char* buf = (const char*)malloc(sizeof(char) * (str.size+1));
+    char* buf = (const char*)malloc(sizeof(char) * (str.size + 1));
     buf[str.size] = '\0';
     strncpy(buf, str.str, str.size);
 
@@ -154,7 +157,9 @@ DirectorEntry* database_add_director_entry(Database* database, const c_string_vi
         // Add new entry
         assert(database->directors_count < database->directors_capacity);
 
-        DirectorEntry* director = &database->directors[database->directors_count++];
+        int currentIndex = database->directors_count++;
+        DirectorEntry* director = &database->directors[currentIndex];
+        director->internal_id = currentIndex;
         director->name = string_view_dup(name);
         director->movies = new_dllist();
 
@@ -178,7 +183,9 @@ CastEntry* database_add_cast_entry(Database* database, const c_string_view name)
         // Add new entry
         assert(database->casts_count < database->casts_capacity);
 
-        CastEntry* cast = &database->casts[database->casts_count++];
+        int currentIndex = database->casts_count++;
+        CastEntry* cast = &database->casts[currentIndex];
+        cast->internal_id = currentIndex;
         cast->name = string_view_dup(name);
         cast->movies = new_dllist();
 
@@ -202,7 +209,9 @@ MovieEntry* database_add_movie_entry(Database* database, const MovieInfo* movieI
         // Add new entry
         assert(database->movies_count < database->movies_capacity);
 
-        MovieEntry* movie = &database->movies[database->movies_count++];
+        int currentIndex = database->movies_count++;
+        MovieEntry* movie = &database->movies[currentIndex];
+        movie->internal_id = currentIndex;
         movie->title = string_view_dup(movieInfo->title);
 
         // Update lookup
@@ -266,7 +275,7 @@ MovieEntry* database_insert_movie(Database* database, const MovieInfo* movieInfo
     // Insert casts
     movie->cast_count = movieInfo->cast_count;
     movie->casts = (CastEntry**)malloc(sizeof(CastEntry*) * movie->cast_count);
-    for (int i = 0; i < min(movieInfo->cast_count, 5); i++)
+    for (int i = 0; i < movieInfo->cast_count; i++)
     {
         CastEntry* insertedCast = database_insert_cast(database, movieInfo->casts[i]);
         movie->casts[i] = insertedCast;
@@ -312,3 +321,142 @@ const MovieEntry* database_find_movie(Database* database, const char* title)
 {
     return jrb_as_movie(jrb_find_str(database->movies_name_lookup, title));
 }
+
+int substring_compare(Jval a, Jval b)
+{
+    const char* string_key = a.s;
+    const char* string_node = b.s;
+
+    if (strstr(string_node, string_key) != NULL)
+    {
+        return 0;
+    }
+
+    return strcmp(string_key, string_node);
+}
+
+const MovieEntry* database_find_movie_g(Database* database, const char* title)
+{
+    return jrb_as_movie(jrb_find_gen(database->movies_name_lookup, new_jval_s(title), substring_compare));
+}
+
+int c = 0;
+
+void movie_update_similarity_score(JRB movieNode, int crossMovieId)
+{
+    JRB score_node = NULL;
+    if ((score_node = jrb_find_int(movieNode, crossMovieId)) == NULL)
+    {
+        c += 1;
+        // First encounter, insert new score node
+        score_node = jrb_insert_int(movieNode, crossMovieId, new_jval_i(0));
+    }
+
+    score_node->val.i += 1;
+}
+
+void movie_calculate_similarity(const MovieEntry* movie, JRB movieNode)
+{
+    // Update score based on directors in common
+    for (int i = 0; i < movie->director_count; i++)
+    {
+        const DirectorEntry* director = movie->directors[i];
+
+        Dllist dll_cross_movie = NULL;
+        dll_traverse(dll_cross_movie, director->movies)
+        {
+            const MovieEntry* cross_movie = (const MovieEntry*)(dll_cross_movie->val.v);
+
+            if (cross_movie->internal_id != movie->internal_id)
+            {
+                movie_update_similarity_score(movieNode, cross_movie->internal_id);
+            }
+        }
+    }
+
+    // Update score based on casts in common
+    for (int i = 0; i < movie->cast_count; i++)
+    {
+        const CastEntry* cast = movie->casts[i];
+
+        Dllist dll_cross_movie = NULL;
+        dll_traverse(dll_cross_movie, cast->movies)
+        {
+            const MovieEntry* cross_movie = (const MovieEntry*)(dll_cross_movie->val.v);
+
+            if (cross_movie->internal_id != movie->internal_id)
+            {
+                movie_update_similarity_score(movieNode, cross_movie->internal_id);
+            }
+        }
+    }
+
+    // Update score based on genres in common
+    for (int i = 0; i < movie->genre_count; i++)
+    {
+        const GenreEntry* genre = movie->genres[i];
+
+        Dllist dll_cross_movie = NULL;
+        dll_traverse(dll_cross_movie, genre->movies)
+        {
+            const MovieEntry* cross_movie = (const MovieEntry*)(dll_cross_movie->val.v);
+
+            if (cross_movie->internal_id != movie->internal_id)
+            {
+                movie_update_similarity_score(movieNode, cross_movie->internal_id);
+            }
+        }
+    }
+}
+
+JRB jval_as_jrb(Jval jval)
+{
+    return (JRB)(jval.v);
+}
+
+void database_generate_similarity_map(Database* database)
+{
+    assert(database->movies_similarity_map == NULL);
+
+    database->movies_similarity_map = make_jrb();
+    JRB similarity_map = database->movies_similarity_map;
+
+    for (int i = 0; i < database->movies_count; i++)
+    {
+        const MovieEntry* movie = &database->movies[i];
+
+        // Insert new entry into similarity map
+        JRB movieNode = jrb_insert_int(similarity_map, movie->internal_id, new_jval_v(make_jrb()));
+        movie_calculate_similarity(movie, jval_as_jrb(movieNode->val));
+    }
+}
+
+void database_generate_similarity_map_1(Database* database, int internalMovieId)
+{
+    assert(database->movies_similarity_map == NULL);
+
+    database->movies_similarity_map = make_jrb();
+    JRB similarity_map = database->movies_similarity_map;
+
+
+    const MovieEntry* movie = &database->movies[internalMovieId];
+
+    // Insert new entry into similarity map
+    JRB movieNode = jrb_insert_int(similarity_map, movie->internal_id, new_jval_v(make_jrb()));
+    movie_calculate_similarity(movie, jval_as_jrb(movieNode->val));
+}
+
+
+JRB database_get_similarity_list(Database* database, int internalMovieId)
+{
+    assert(database->movies_similarity_map != NULL);
+
+    JRB movie_node = jrb_find_int(database->movies_similarity_map, internalMovieId);
+    if (movie_node == NULL)
+    {
+        return NULL;
+    }
+
+    return jval_as_jrb(movie_node->val);
+}
+
