@@ -208,7 +208,7 @@ namespace csv_reader
         return result;
     }
 
-    int read_csv_internal(const char* path, ReaderCallBack callback)
+    int read_csv_internal(const char* path, ReaderCallBack callback, void* opaque)
     {
         DefaultCSVReader reader{ path };
 
@@ -265,7 +265,7 @@ namespace csv_reader
                 MovieInfo movieInfo = create_movie_info(showId, trim(type), trim(title), 
                     directors_c, casts_c, release_year, trim(duration), genres_c);
 
-                callback(&movieInfo);
+                callback(&movieInfo, opaque);
 
                 count++;
             }
@@ -278,8 +278,8 @@ namespace csv_reader
     }
 }
 
-void read_csv(const char* path, ReaderCallBack callback)
+void read_csv(const char* path, ReaderCallBack callback, void* opaque)
 {
     // SetConsoleOutputCP(65001);
-    csv_reader::read_csv_internal(path, callback);
+    csv_reader::read_csv_internal(path, callback, opaque);
 }

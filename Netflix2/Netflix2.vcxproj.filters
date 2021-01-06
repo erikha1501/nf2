@@ -36,6 +36,12 @@
     <ClInclude Include="inc\database.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="inc\jquicksort.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\app.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\csv_reader.cpp">
@@ -54,6 +60,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\database.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\jquicksort.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -58,6 +58,19 @@ typedef struct _GenreEntry
     Dllist movies;
 } GenreEntry;
 
+
+typedef struct _SimilarityEntry
+{
+    int score;
+    MovieEntry* movie;
+} SimilarityEntry;
+
+typedef struct _SimilarityList
+{
+    int list_size;
+    SimilarityEntry list[10];
+} SimilarityList;
+
 typedef struct _Database
 {
     int movies_capacity;
@@ -85,18 +98,13 @@ typedef struct _Database
     // Key -> name, value -> GenreEntry*
     JRB genres_name_lookup;
 
-    // Key -> internal movie id,
-    // value -> JRB
-    // { key -> internal movie id, value -> score }
-    //
-    JRB movies_similarity_map;
+    SimilarityList* movies_similarity;
 } Database;
 
 Database* database_create();
 void database_drop(Database* database);
 
 void database_generate_similarity_map(Database* database);
-void database_generate_similarity_map_1(Database* database, int internalMovieId);
 
 const MovieEntry* database_add_movie(Database* database, const MovieInfo* movieInfo);
 
@@ -104,9 +112,10 @@ const GenreEntry* database_find_genre(Database* database, const char* name);
 const DirectorEntry* database_find_director(Database* database, const char* name);
 const CastEntry* database_find_cast(Database* database, const char* name);
 const MovieEntry* database_find_movie(Database* database, const char* title);
-
 const MovieEntry* database_find_movie_g(Database* database, const char* title);
 
-JRB database_get_similarity_list(Database* database, int internalMovieId);
+Dllist database_find_movies(Database* database, const char* keyword);
+Dllist database_find_directors(Database* database, const char* keyword);
+Dllist database_find_casts(Database* database, const char* keyword);
 
-int c;
+const SimilarityList* database_get_similarity_list(Database* database, int internalMovieId);

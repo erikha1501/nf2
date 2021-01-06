@@ -70,9 +70,9 @@ extern "C" {
         c_string_view description;
     } MovieInfo;
 
-    typedef void (*ReaderCallBack)(const MovieInfo*);
+    typedef void (*ReaderCallBack)(const MovieInfo*, void* opaque);
 
-    void read_csv(const char* path, ReaderCallBack callback);
+    void read_csv(const char* path, ReaderCallBack callback, void* opaque);
 
 #ifdef __cplusplus
 }

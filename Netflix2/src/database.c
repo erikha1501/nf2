@@ -1,6 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "../inc/database.h"
+#include "../inc/jquicksort.h"
 
 #include <assert.h>
 #include <stdlib.h>
@@ -87,7 +88,7 @@ void database_init(Database* database)
     }
 
     // Initialize movies similarity map
-    database->movies_similarity_map = NULL;
+    database->movies_similarity = NULL;
 }
 
 const char* string_view_dup(const c_string_view str)
@@ -340,23 +341,94 @@ const MovieEntry* database_find_movie_g(Database* database, const char* title)
     return jrb_as_movie(jrb_find_gen(database->movies_name_lookup, new_jval_s(title), substring_compare));
 }
 
-int c = 0;
+Dllist database_find_movies(Database* database, const char* keyword)
+{
+    Dllist result = new_dllist();
 
-void movie_update_similarity_score(JRB movieNode, int crossMovieId)
+    int count = 0;
+
+    for (int i = 0; i < database->movies_count; i++)
+    {
+        if (count >= 5)
+        {
+            break;
+        }
+
+        const MovieEntry* movie = &database->movies[i];
+        if (strstr(movie->title, keyword) != NULL)
+        {
+            dll_append(result, new_jval_v(movie));
+            count++;
+        }
+    }
+
+    return result;
+}
+Dllist database_find_directors(Database* database, const char* keyword)
+{
+    Dllist result = new_dllist();
+
+    int count = 0;
+
+    for (int i = 0; i < database->directors_count; i++)
+    {
+        if (count >= 5)
+        {
+            break;
+        }
+
+        const DirectorEntry* director = &database->directors[i];
+        if (strstr(director->name, keyword) != NULL)
+        {
+            dll_append(result, new_jval_v(director));
+            count++;
+        }
+    }
+
+    return result;
+}
+Dllist database_find_casts(Database* database, const char* keyword)
+{
+    Dllist result = new_dllist();
+
+    int count = 0;
+
+    for (int i = 0; i < database->casts_count; i++)
+    {
+        if (count >= 5)
+        {
+            break;
+        }
+
+        const CastEntry* cast = &database->casts[i];
+        if (strstr(cast->name, keyword) != NULL)
+        {
+            dll_append(result, new_jval_v(cast));
+            count++;
+        }
+    }
+
+    return result;
+}
+
+
+void movie_update_similarity_score(JRB movieNode, int crossMovieId, int* similarMoviesCount)
 {
     JRB score_node = NULL;
     if ((score_node = jrb_find_int(movieNode, crossMovieId)) == NULL)
     {
-        c += 1;
         // First encounter, insert new score node
         score_node = jrb_insert_int(movieNode, crossMovieId, new_jval_i(0));
+        *similarMoviesCount += 1;
     }
 
     score_node->val.i += 1;
 }
 
-void movie_calculate_similarity(const MovieEntry* movie, JRB movieNode)
+int movie_calculate_similarity(const MovieEntry* movie, JRB movieNode)
 {
+    int similar_movies_count = 0;
+
     // Update score based on directors in common
     for (int i = 0; i < movie->director_count; i++)
     {
@@ -369,7 +441,7 @@ void movie_calculate_similarity(const MovieEntry* movie, JRB movieNode)
 
             if (cross_movie->internal_id != movie->internal_id)
             {
-                movie_update_similarity_score(movieNode, cross_movie->internal_id);
+                movie_update_similarity_score(movieNode, cross_movie->internal_id, &similar_movies_count);
             }
         }
     }
@@ -386,7 +458,7 @@ void movie_calculate_similarity(const MovieEntry* movie, JRB movieNode)
 
             if (cross_movie->internal_id != movie->internal_id)
             {
-                movie_update_similarity_score(movieNode, cross_movie->internal_id);
+                movie_update_similarity_score(movieNode, cross_movie->internal_id, &similar_movies_count);
             }
         }
     }
@@ -403,10 +475,12 @@ void movie_calculate_similarity(const MovieEntry* movie, JRB movieNode)
 
             if (cross_movie->internal_id != movie->internal_id)
             {
-                movie_update_similarity_score(movieNode, cross_movie->internal_id);
+                movie_update_similarity_score(movieNode, cross_movie->internal_id, &similar_movies_count);
             }
         }
     }
+
+    return similar_movies_count;
 }
 
 JRB jval_as_jrb(Jval jval)
@@ -414,49 +488,67 @@ JRB jval_as_jrb(Jval jval)
     return (JRB)(jval.v);
 }
 
+int jval_score_comparer(Jval* a, Jval* b)
+{
+    JRB score_a = jval_as_jrb(*a);
+    JRB score_b = jval_as_jrb(*b);
+
+    return score_b->val.i - score_a->val.i;
+}
+
+void generate_similarity_list(Database* database, int internalMovieId)
+{
+    JRB movie_node = make_jrb();
+
+    // Populate movie_node with similar movies
+    int similar_movies_count = movie_calculate_similarity(&database->movies[internalMovieId], movie_node);
+
+    // Populate a list of pointers into each score_node
+    Jval* similar_movies_array = malloc(sizeof(Jval) * similar_movies_count);
+    int similar_movie_index = 0;
+
+    JRB score_node = NULL;
+    jrb_traverse(score_node, movie_node)
+    {
+        similar_movies_array[similar_movie_index++] = new_jval_v(score_node);
+    }
+
+    assert(similar_movie_index == similar_movies_count);
+
+    // Sort list of pointers
+    qsort_jval(similar_movies_array, 0, similar_movie_index - 1, jval_score_comparer);
+
+    // Extract top 10 movies with highest score
+    SimilarityList* similarity_list = &database->movies_similarity[internalMovieId];
+    similar_movies_count = similar_movies_count < 10 ? similar_movies_count : 10;
+
+    similarity_list->list_size = similar_movies_count;
+    for (int i = 0; i < similarity_list->list_size; i++)
+    {
+        JRB score_node = jval_as_jrb(similar_movies_array[i]);
+        similarity_list->list[i] =
+            (SimilarityEntry){.score = jval_i(score_node->val), .movie = &database->movies[score_node->key.i]};
+    }
+
+    free(similar_movies_array);
+    jrb_free_tree(movie_node);
+}
+
 void database_generate_similarity_map(Database* database)
 {
-    assert(database->movies_similarity_map == NULL);
+    assert(database->movies_similarity == NULL);
 
-    database->movies_similarity_map = make_jrb();
-    JRB similarity_map = database->movies_similarity_map;
+    database->movies_similarity = (SimilarityList*)malloc(sizeof(SimilarityList) * database->movies_count);
 
     for (int i = 0; i < database->movies_count; i++)
     {
-        const MovieEntry* movie = &database->movies[i];
-
-        // Insert new entry into similarity map
-        JRB movieNode = jrb_insert_int(similarity_map, movie->internal_id, new_jval_v(make_jrb()));
-        movie_calculate_similarity(movie, jval_as_jrb(movieNode->val));
+        generate_similarity_list(database, i);
     }
 }
 
-void database_generate_similarity_map_1(Database* database, int internalMovieId)
+const SimilarityList* database_get_similarity_list(Database* database, int internalMovieId)
 {
-    assert(database->movies_similarity_map == NULL);
+    assert(database->movies_similarity != NULL);
 
-    database->movies_similarity_map = make_jrb();
-    JRB similarity_map = database->movies_similarity_map;
-
-
-    const MovieEntry* movie = &database->movies[internalMovieId];
-
-    // Insert new entry into similarity map
-    JRB movieNode = jrb_insert_int(similarity_map, movie->internal_id, new_jval_v(make_jrb()));
-    movie_calculate_similarity(movie, jval_as_jrb(movieNode->val));
+    return &database->movies_similarity[internalMovieId];
 }
-
-
-JRB database_get_similarity_list(Database* database, int internalMovieId)
-{
-    assert(database->movies_similarity_map != NULL);
-
-    JRB movie_node = jrb_find_int(database->movies_similarity_map, internalMovieId);
-    if (movie_node == NULL)
-    {
-        return NULL;
-    }
-
-    return jval_as_jrb(movie_node->val);
-}
-

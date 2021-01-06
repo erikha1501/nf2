@@ -33,3 +33,4 @@ $(BINDIR)/app: $(OBJS)
 clean:
 	rm -rf $(ODIR)/c/*.o
 	rm -rf $(ODIR)/cxx/*.o
+	rm $(BINDIR)/app
