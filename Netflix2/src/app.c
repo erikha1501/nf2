@@ -1,8 +1,10 @@
 #include "../inc/app.h"
 #include "../inc/shared/csv_reader_c.h"
 
-#include <stdlib.h>
 #include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include "../inc/jquicksort.h"
 
 App* app_create()
 {
@@ -16,7 +18,6 @@ void app_drop(App* app)
     free(app);
 }
 
-
 void callback(const MovieInfo* movieInfo, void* opaque)
 {
     Database* database = (Database*)opaque;
@@ -26,7 +27,7 @@ void callback(const MovieInfo* movieInfo, void* opaque)
 void app_init(App* app)
 {
     app->database = database_create();
-    
+
     const char* path = "./data/netflix_titles2.csv";
     read_csv(path, callback, app->database);
 
@@ -35,6 +36,54 @@ void app_init(App* app)
     printf("Done.\n");
 
     app->watched_list = make_jrb();
+}
+
+void printMovie(const MovieEntry* movie)
+{
+    printf("[%d] %s (%d) - ", movie->internal_id, movie->title, movie->release_year);
+    switch (movie->type)
+    {
+    case TVShow:
+        printf("TV show");
+        break;
+    case Movie:
+        printf("Movie");
+        break;
+    default:
+        break;
+    }
+
+    printf("\n");
+}
+
+void printCast(const CastEntry* cast)
+{
+    printf("[%d] %s", cast->internal_id, cast->name);
+    printf("\n");
+}
+
+void app_get_cast_movies(App* app, int cast_id)
+{
+    if (cast_id >= 0 && cast_id < app->database->casts_count)
+    {
+        JRB cast_movie = NULL;
+
+        const CastEntry* cast = &app->database->casts[cast_id];
+
+        printf("Movies featuring: ");
+        printCast(cast);
+
+        Dllist movie_dll = NULL;
+        dll_traverse(movie_dll, cast->movies)
+        {
+            const MovieEntry* movie = (const MovieEntry*)(movie_dll->val.v);
+            printMovie(movie);
+        }
+    }
+    else
+    {
+        printf("Invalid cast id\n");
+    }
 }
 
 void app_add_to_watched_list(App* app, int internalMovieId)
@@ -55,6 +104,28 @@ void app_add_to_watched_list(App* app, int internalMovieId)
     {
         printf("Invalid movie id\n");
     }
+}
+
+void app_show_watched_list(App* app)
+{
+    if (jrb_empty(app->watched_list))
+    {
+        printf("You haven't watched any movies yet\n");
+        return;
+    }
+
+    JRB movie_node = NULL;
+    jrb_traverse(movie_node, app->watched_list)
+    {
+        const MovieEntry* movie = &app->database->movies[movie_node->key.i];
+        printMovie(movie);
+    }
+}
+
+void app_clear_watched_list(App* app)
+{
+    jrb_free_tree(app->watched_list);
+    app->watched_list = make_jrb();
 }
 
 void recommended_movies_add(JRB similarMovieTree, const SimilarityList* similarMovies, int* similarCount)
@@ -99,7 +170,6 @@ Dllist app_recommend_movies(const App* app)
 
         recommended_movies_add(similar_movie_tree, similarity_list, &similar_movies_count);
     }
-
 
     // Populate a list of pointers into each score_node
     Jval* similar_movies_array = malloc(sizeof(Jval) * similar_movies_count);

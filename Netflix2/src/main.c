@@ -8,38 +8,17 @@
 
 App* app;
 
-void printMovie(const MovieEntry* movie)
-{
-    printf("[%d] %s (%d) - ", movie->internal_id, movie->title, movie->release_year);
-    switch (movie->type)
-    {
-    case TVShow:
-        printf("TV show");
-        break;
-    case Movie:
-        printf("Movie");
-        break;
-    default:
-        break;
-    }
-
-    printf("\n");
-}
-
-void printCast(const CastEntry* cast)
-{
-    printf("%s", cast->name);
-    printf("\n");
-}
-
 void showMenu()
 {
     printf("\n__________________MENU___________________\n");
     printf("Choose an option to perform:\n");
     printf("1. Search for movie by title\n");
     printf("2. Search for cast name\n");
-    printf("3. Add movie to watch list\n");
-    printf("4. Recommend movie from watch list\n");
+    printf("3. Search for movies featuring cast\n");
+    printf("4. Add movie to watched list\n");
+    printf("5. Show watched list\n");
+    printf("6. Clear watched list\n");
+    printf("7. Recommend movie from watch list\n");
     printf("0. Exit\n");
 }
 
@@ -81,6 +60,17 @@ void searchCastName()
     free_dllist(casts_list);
 }
 
+
+void searchCastMovies()
+{
+    printf("Enter actor/actress id: ");
+
+    int cast_id = -1;
+    scanf(" %d", &cast_id);
+    
+    app_get_cast_movies(app, cast_id);
+}
+
 void addWatchList()
 {
     printf("Enter movie id: ");
@@ -90,6 +80,18 @@ void addWatchList()
     
     app_add_to_watched_list(app, movie_id);
 }
+
+void showWatchList()
+{
+    app_show_watched_list(app);
+}
+
+void clearWatchList()
+{
+    app_clear_watched_list(app);
+    printf("Watched list cleared.");
+}
+
 
 void recommendMovies()
 {
@@ -105,9 +107,9 @@ void recommendMovies()
             const MovieEntry* movie = (const MovieEntry*)(movie_dll->val.v);
             printMovie(movie);
         }
-    }
 
-    free_dllist(recommended_movies);
+        free_dllist(recommended_movies);
+    }
 }
 
 int main()
@@ -132,9 +134,18 @@ int main()
             searchCastName();
             break;
         case 3:
-            addWatchList();
+            searchCastMovies();
             break;
         case 4:
+            addWatchList();
+            break;
+        case 5:
+            showWatchList();
+            break;
+        case 6:
+            clearWatchList();
+            break;
+        case 7:
             recommendMovies();
             break;
         default:

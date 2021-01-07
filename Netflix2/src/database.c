@@ -299,6 +299,35 @@ Database* database_create()
 void database_drop(Database* database)
 {
     // TODO
+    for (int i = 0; i< database->movies_count; i ++) {
+        free(database->movies[i].casts);
+        free(database->movies[i].directors);
+        free(database->movies[i].genres);
+        free(database->movies[i].title);
+    }
+    free(database->movies);
+    for (int i = 0; i< database->casts_count; i ++) {
+        free_dllist(database->casts[i].movies);
+        free(database->casts[i].name);
+    }   
+    free(database->casts);
+    for (int i = 0; i< database->directors_count; i ++) {
+        free_dllist(database->directors[i].movies);
+        free(database->directors[i].name);
+    }
+    free(database->directors);
+    for (int i = 0; i< database->genres_count; i ++) {
+        free_dllist(database->genres[i].movies);
+    }
+    free(database->genres);
+
+    jrb_free_tree(database->genres_name_lookup);
+    jrb_free_tree(database->casts_name_lookup);
+    jrb_free_tree(database->directors_name_lookup);
+    jrb_free_tree(database->movies_name_lookup);
+
+    free(database->movies_similarity);
+    free(database);
 }
 
 const MovieEntry* database_add_movie(Database* database, const MovieInfo* movieInfo)
