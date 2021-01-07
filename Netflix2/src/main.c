@@ -60,7 +60,6 @@ void searchCastName()
     free_dllist(casts_list);
 }
 
-
 void searchCastMovies()
 {
     printf("Enter actor/actress id: ");
@@ -91,7 +90,6 @@ void clearWatchList()
     app_clear_watched_list(app);
     printf("Watched list cleared.");
 }
-
 
 void recommendMovies()
 {
